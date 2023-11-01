@@ -33,8 +33,6 @@ try {
         primaryStage.setY(event.getScreenY() - yOffset);
     });
   
-  
-        primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
         primaryStage.show();
     
