@@ -89,6 +89,15 @@ public class LoginSceneController extends user implements Initializable{
             Parent loader = FXMLLoader.load(getClass().getResource("HomeScene.fxml"));
             Scene LoginPageScene = new Scene(loader);
             Stage appStage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            loader.setOnMousePressed(mouseEvent -> {
+                appStage.setUserData(new double[]{mouseEvent.getSceneX(), mouseEvent.getSceneY()});
+            });
+    
+            loader.setOnMouseDragged(mouseEvent -> {
+                double[] data = (double[]) appStage.getUserData();
+                appStage.setX(mouseEvent.getScreenX() - data[0]);
+                appStage.setY(mouseEvent.getScreenY() - data[1]);
+            });
             
             appStage.setScene(LoginPageScene);
             appStage.show();
