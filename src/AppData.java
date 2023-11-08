@@ -1,6 +1,7 @@
 public class AppData {
     private static AppData instance;
     private User currentUser;
+    private String searchText;
 
     private AppData() {
         // Private constructor to prevent instantiation outside of this class
@@ -19,5 +20,13 @@ public class AppData {
 
     public void setCurrentUser(User user) {
         currentUser = user;
+    }
+
+    public String getSearchText() {
+        return searchText;
+    }
+
+    public void setSearchText(String text) {
+        searchText = text;
     }
 }

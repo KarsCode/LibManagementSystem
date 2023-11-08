@@ -4,6 +4,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -19,20 +21,11 @@ public class LoginSceneController implements Initializable{
     private Button LoginBtn;
     @FXML
     private TextField loginCred;
-    //private Button LoginCloseBtn
-    // public LoginSceneController() {
-    //     super("", 0); // Invoke user's constructor with default or placeholder values
-    // }
-
-
-    // LoginSceneController(String name, int uid)
-    // {
-    //     super(name,uid);
-    // }
+    
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Initialize code here if needed
+       
     }
 
      @FXML
@@ -74,10 +67,10 @@ public class LoginSceneController implements Initializable{
 
         try {
             
-            if(user!=null)
+            if(user!=null && !userInput.isEmpty())
             {
                 AppData.getInstance().setCurrentUser(user);
-            }
+            
             Parent loader = FXMLLoader.load(getClass().getResource("HomeScene.fxml"));
             Scene LoginPageScene = new Scene(loader);
             Stage appStage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -93,6 +86,19 @@ public class LoginSceneController implements Initializable{
             
             appStage.setScene(LoginPageScene);
             appStage.show();
+        }
+
+        else
+        {
+            System.out.println("No User Entered.");
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Invalid Credentials");
+            alert.setHeaderText(null);
+            alert.setContentText("Enter Valid Username or UID");
+            alert.show();
+
+
+        }
 
  
         } catch (IOException e) {
@@ -100,39 +106,6 @@ public class LoginSceneController implements Initializable{
         }
         
     }
-
-    //     public static <T> User credentials(T id, User u[])  {
-    //     int in = -1;
-    //     if (id instanceof Integer) {
-    //         int regid = (Integer) id;
-    //         for(int i=0;i<3;i++){
-    //             if (regid == u[i].getUid()){
-    //                 in = i;
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //      else if (id instanceof String) {
-    //         String name = (String) id;
-        
-    //         for(int i=0;i<3;i++){
-    //             if(u[i].getUsername().toLowerCase().contains(name.toLowerCase())){
-    //                 in = i;
-    //                 break;
-    //             }
-    //         }
-    //     } 
-    //     else {
-    //         System.out.println("Invalid input type");
-    //         return null;
-    //     }
-    //     if(in != -1) 
-    //     {System.out.println("Welcome back, "+u[in].getUsername() +"!");
-    //     return u[in];
-    
-        
-    // }
-    // }
 
     public static <T> User credentials(T id, User[] users) {
         int in = -1;

@@ -67,6 +67,7 @@ public class ProfileSceneController implements Initializable {
     public void goToLogin(ActionEvent event) {
         // Define actions when the "Back To Login" button is clicked
         try {
+            AppData.getInstance().setCurrentUser(null);
             Parent loader = FXMLLoader.load(getClass().getResource("LoginScene.fxml"));
             Scene profilePageScene = new Scene(loader);
             Stage appStage = (Stage)((Node) event.getSource()).getScene().getWindow();

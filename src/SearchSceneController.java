@@ -3,6 +3,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -10,6 +11,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -71,29 +75,67 @@ public class SearchSceneController {
         }
     }
 
-     ObservableList<Book> bookList = FXCollections.observableArrayList(
-                new Book("Book1", "Author1", "Fiction", "ISBN001", 10),
-                new Book("Book2", "Author2", "Non-Fiction", "ISBN002", 15),
-                new Book("Book3", "Author3", "Science", "ISBN003", 20)
-        );
 
     @FXML
     public void initialize() {
-       
-        //Add dummy data to the table
-    
-    if (tableView != null && name != null) {
-        //name.setCellValueFactory(new PropertyValueFactory<>("name"));
-        name.setCellValueFactory(new PropertyValueFactory<Book, String>("name"));
-        author.setCellValueFactory(new PropertyValueFactory<>("author"));
-        genre.setCellValueFactory(new PropertyValueFactory<>("genre"));
-        isbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
-        inventory.setCellValueFactory(new PropertyValueFactory<>("inventory"));
-        tableView.setItems(bookList);
-    }
-       
-       
-
+         String searchText = AppData.getInstance().getSearchText();
         
+        ObservableList<Book> bookList = FXCollections.observableArrayList(BookDatabase.books);
+        ObservableList<Book> searchedBooks = FXCollections.observableArrayList();
+
+        Search1 searchByName = new Search1(bookList.size(), bookList.toArray(new Book[0]), searchText);
+        Search2 searchByAuthor = new Search2(bookList.size(), bookList.toArray(new Book[0]), searchText);
+        Search3 searchByGenre = new Search3(bookList.size(), bookList.toArray(new Book[0]), searchText);
+
+        Thread thread1 = new Thread(searchByName);
+        Thread thread2 = new Thread(searchByAuthor);
+        Thread thread3 = new Thread(searchByGenre);
+
+        thread1.start();
+        thread2.start();
+        thread3.start();
+
+        try {
+            thread1.join();
+            thread2.join();
+            thread3.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Gather results from search threads
+        String[] isbnList1 = searchByName.isbnList;
+        String[] isbnList2 = searchByAuthor.isbnList;
+        String[] isbnList3 = searchByGenre.isbnList;
+
+        // Combine the ISBNs from all searches
+        Set<String> combinedISBNs = new HashSet<>();
+        combinedISBNs.addAll(Arrays.asList(isbnList1));
+        combinedISBNs.addAll(Arrays.asList(isbnList2));
+        combinedISBNs.addAll(Arrays.asList(isbnList3));
+
+        // Fetch books based on the combined ISBNs
+        for (String isbn : combinedISBNs) {
+            for (Book book : bookList) {
+                if (book.getIsbn().equals(isbn)) {
+                    searchedBooks.add(book);
+                }
+            }
+        }
+
+        // Populate the TableView with the searched books
+        if (searchedBooks.isEmpty()) {
+            tableView.setPlaceholder(new Label("The item you have entered may not exist, try using different search parameters"));
+        } else {
+            // Populate the TableView with the searched books
+            if (tableView != null && name != null) {
+                name.setCellValueFactory(new PropertyValueFactory<>("name"));
+                author.setCellValueFactory(new PropertyValueFactory<>("author"));
+                genre.setCellValueFactory(new PropertyValueFactory<>("genre"));
+                isbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+                inventory.setCellValueFactory(new PropertyValueFactory<>("inventory"));
+                tableView.setItems(searchedBooks);
+            }
+        }
     }
 }

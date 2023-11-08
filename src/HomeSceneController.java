@@ -51,6 +51,7 @@ public class HomeSceneController {
         String searchText = searchField.getText();
         // Add your logic here for handling the search functionality
         System.out.println("Search button clicked with text: " + searchText);
+        AppData.getInstance().setSearchText(searchText);
         
         try {
             Parent loader = FXMLLoader.load(getClass().getResource("SearchScene.fxml"));
@@ -103,6 +104,7 @@ public class HomeSceneController {
     private void goToLogin(ActionEvent event) {
         
         try {
+            AppData.getInstance().setCurrentUser(null);
             Parent loader = FXMLLoader.load(getClass().getResource("LoginScene.fxml"));
             Scene HomePageScene = new Scene(loader);
             Stage appStage = (Stage)((Node)event.getSource()).getScene().getWindow();
