@@ -13,32 +13,22 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-class user{
-    String name;
-    int uid;
-
-    user(String name, int uid){
-        this.name = name;
-        this.uid = uid;
-    }
-}
-
-public class LoginSceneController extends user implements Initializable{
+public class LoginSceneController implements Initializable{
 
     @FXML
     private Button LoginBtn;
     @FXML
     private TextField loginCred;
     //private Button LoginCloseBtn
-    public LoginSceneController() {
-        super("", 0); // Invoke user's constructor with default or placeholder values
-    }
+    // public LoginSceneController() {
+    //     super("", 0); // Invoke user's constructor with default or placeholder values
+    // }
 
 
-    LoginSceneController(String name, int uid)
-    {
-        super(name,uid);
-    }
+    // LoginSceneController(String name, int uid)
+    // {
+    //     super(name,uid);
+    // }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -69,23 +59,25 @@ public class LoginSceneController extends user implements Initializable{
     public void LoginFunc(ActionEvent event) {
          String userInput = loginCred.getText(); // Retrieve the text from the TextField
          System.out.println("User input: " + userInput);
+         int regid;
+         User user = null;
 
-            user u[]= new user[]{
-            new user("dog", 123),
-            new user("cat", 356),
-            new user("cow", 678),
-        };
          
-        int regid;
+    
         
             try{
                 regid = Integer.parseInt(userInput);
-                credentials(regid, u);
+                 user = credentials(regid, UserDatabase.users);
             }catch(NumberFormatException e){
-                credentials(userInput,u);
+                user = credentials(userInput,UserDatabase.users);
         }// Print the input (you can handle it as needed)
 
         try {
+            
+            if(user!=null)
+            {
+                AppData.getInstance().setCurrentUser(user);
+            }
             Parent loader = FXMLLoader.load(getClass().getResource("HomeScene.fxml"));
             Scene LoginPageScene = new Scene(loader);
             Stage appStage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -101,39 +93,84 @@ public class LoginSceneController extends user implements Initializable{
             
             appStage.setScene(LoginPageScene);
             appStage.show();
+
+ 
         } catch (IOException e) {
             e.printStackTrace(); // Handle the exception as needed
         }
         
     }
 
-        public static <T> void credentials(T id, user u[])  {
+    //     public static <T> User credentials(T id, User u[])  {
+    //     int in = -1;
+    //     if (id instanceof Integer) {
+    //         int regid = (Integer) id;
+    //         for(int i=0;i<3;i++){
+    //             if (regid == u[i].getUid()){
+    //                 in = i;
+    //                 break;
+    //             }
+    //         }
+    //     }
+    //      else if (id instanceof String) {
+    //         String name = (String) id;
+        
+    //         for(int i=0;i<3;i++){
+    //             if(u[i].getUsername().toLowerCase().contains(name.toLowerCase())){
+    //                 in = i;
+    //                 break;
+    //             }
+    //         }
+    //     } 
+    //     else {
+    //         System.out.println("Invalid input type");
+    //         return null;
+    //     }
+    //     if(in != -1) 
+    //     {System.out.println("Welcome back, "+u[in].getUsername() +"!");
+    //     return u[in];
+    
+        
+    // }
+    // }
+
+    public static <T> User credentials(T id, User[] users) {
         int in = -1;
         if (id instanceof Integer) {
             int regid = (Integer) id;
-            for(int i=0;i<3;i++){
-                if (regid == u[i].uid){
+            for (int i = 0; i < users.length; i++) {
+                if (regid == users[i].getUid()) {
                     in = i;
                     break;
                 }
             }
-        }
-         else if (id instanceof String) {
+        } else if (id instanceof String) {
             String name = (String) id;
-        
-            for(int i=0;i<3;i++){
-                if(u[i].name.toLowerCase().contains(name.toLowerCase())){
+    
+            for (int i = 0; i < users.length; i++) {
+                if (users[i].getUsername().toLowerCase().contains(name.toLowerCase())) {
                     in = i;
                     break;
                 }
             }
-        } 
-        else {
+        } else {
             System.out.println("Invalid input type");
+            return null;
         }
-        if(in != -1) 
-        System.out.println("Welcome back, "+u[in].name +"!");
+    
+        if (in != -1) {
+            System.out.println("Welcome back, " + users[in].getUsername() + "!");
+            return users[in];
+        } else {
+            return null;
+        }
     }
+   
+    
+    
+    
+    
+    
+    
 }
-
 

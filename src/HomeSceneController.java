@@ -31,12 +31,17 @@ public class HomeSceneController {
     @FXML
     private Button userProfilebtn;
 
-    // This method is called when the FXML is initialized
+    
+
     @FXML
     public void initialize() {
-        // You can perform any additional setup here
-        // For example, setting the text of components
-        welcomeText.setText("Welcome Back User");
+
+
+            User currentUser = AppData.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                welcomeText.setText("Welcome Back " + currentUser.getUsername());
+            }
+        
     }
 
     // Define action/event handling methods here
