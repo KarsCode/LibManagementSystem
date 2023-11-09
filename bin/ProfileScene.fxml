@@ -24,7 +24,7 @@
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <TableView prefHeight="200.0" prefWidth="458.0">
+                  <TableView fx:id="bookTableView" prefHeight="200.0" prefWidth="458.0">
                     <columns>
                       <TableColumn fx:id="nameColumn" prefWidth="224.00005799531937" text="Name" />
                       <TableColumn fx:id="isbnColumn" prefWidth="230.3999786376953" text="ISBN Code" />
@@ -35,8 +35,6 @@
         </content>
       </ScrollPane>
       <Text layoutX="85.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 900;" text="Borrowed Books: " />
-      <Text layoutX="85.0" layoutY="336.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 900;" text="Late Fees Owed : " />
-      <Text layoutX="197.0" layoutY="336.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-underline: true;" text="Amount" />
       <Text layoutX="85.0" layoutY="383.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: 900; -fx-underline: true;" text="Return a Book: " />
       <TextField layoutX="85.0" layoutY="396.0" promptText="Enter ISBN Code" />
       <Button fx:id="ReturnBookBtn" layoutX="275.0" layoutY="396.0" mnemonicParsing="false" onAction="#returnBook" style="-fx-background-color: #00bfff; -fx-border-color: black;" text="Return Book" />

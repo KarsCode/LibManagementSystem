@@ -5,7 +5,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.animation.PauseTransition;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,13 +36,13 @@ import javafx.fxml.Initializable;
 public class ProfileSceneController implements Initializable {
 
     @FXML
-    private TableView<?> bookTableView;
+    private TableView<Book> bookTableView;
 
     @FXML
-    private TableColumn<?, ?> nameColumn;
+    private TableColumn<Book, String> nameColumn;
 
     @FXML
-    private TableColumn<?, ?> isbnColumn;
+    private TableColumn<Book, Integer> isbnColumn;
 
     @FXML
     private TextField isbnTextField;
@@ -56,12 +58,24 @@ public class ProfileSceneController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Initialize your scene elements or handle initial setup here
-        // You can bind data, set up listeners, or any other initialization.
-        // For example:
-        // nameColumn.setCellValueFactory(...);
-        // isbnColumn.setCellValueFactory(...);
+        if (bookTableView != null) {
+            System.out.println("HELP ME OMG");
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            isbnColumn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+    
+            User currentUser = AppData.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                Book[] userBorrowedBooks = currentUser.getBorrowedBooks();
+                if (userBorrowedBooks != null) {
+                    ObservableList<Book> borrowedBooks = FXCollections.observableArrayList(userBorrowedBooks);
+                    bookTableView.setItems(borrowedBooks);
+                } else {
+                    bookTableView.setItems(FXCollections.emptyObservableList());
+                }
+            }
+        }
     }
+    
 
     @FXML
     public void goToLogin(ActionEvent event) {
@@ -120,5 +134,9 @@ public class ProfileSceneController implements Initializable {
         alert.setContentText("Book Successfully Returned");
         alert.show();
     }
+
+    
+    
+
 }
 

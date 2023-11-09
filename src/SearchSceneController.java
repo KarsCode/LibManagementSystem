@@ -3,6 +3,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Date;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,7 +30,7 @@ public class SearchSceneController {
     private TableView<Book> tableView;
 
     @FXML
-    private TextField isbnTextField;
+    private TextField BorrowTextField;
 
     @FXML
     private TableColumn<Book, String> name;
@@ -44,9 +47,35 @@ public class SearchSceneController {
     // Method triggered when Borrow button is clicked
     @FXML
     public void BorrowBook() {
-        String isbn = isbnTextField.getText();
+        String isbn = BorrowTextField.getText();
+        User currentUser = AppData.getInstance().getCurrentUser();
+        Book bookToBorrow = null;
+        for (Book book : BookDatabase.books) {
+            if (book.getIsbn().equals(isbn)) {
+                bookToBorrow = book;
+                break;
+            }
+        }
+        if (bookToBorrow != null && bookToBorrow.getInventory() > 0) {
+            // Borrow the book if it exists and has available inventory
+            
+    
+           if (currentUser != null) {
+            Date borrowedDate = new Date(); // Current date as the borrowed date
+            currentUser.addBorrowedBook(bookToBorrow, borrowedDate);
+            bookToBorrow.inventory--; // Reduce the book's inventory
+            showAlert(AlertType.INFORMATION, "Book Borrowed", "Book with ISBN " + isbn + " has been borrowed by " + currentUser.getUsername());
+            initialize();
+        } else {
+            showAlert(AlertType.ERROR, "User Not Logged In", "No user logged in to borrow the book.");
+        }
+    } else if (bookToBorrow == null) {
+        showAlert(AlertType.ERROR, "Book Not Found", "Book with ISBN " + isbn + " not found in the database.");
+    } else {
+        showAlert(AlertType.WARNING, "Not Available", "The book with ISBN " + isbn + " is not available for borrowing.");
+    }
         // Implement borrowing logic here using the entered ISBN code
-        System.out.println("Borrow button clicked with ISBN: " + isbn);
+        // System.out.println("Borrow button clicked with ISBN: " + isbn);
         // Perform borrowing actions here
     }
 
@@ -138,4 +167,12 @@ public class SearchSceneController {
             }
         }
     }
+
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+    Alert alert = new Alert(alertType);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(content);
+    alert.show();
+}
 }
