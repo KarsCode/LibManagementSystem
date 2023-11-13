@@ -22,7 +22,7 @@ class Search1 implements Runnable { // for book name
                 String t1 = book[i].name.toLowerCase();
 
                 if (t1.contains(s)) {
-                    book[i].display();
+                    //book[i].display();
                     isbnList[count] = book[i].getIsbn();
                     count++;
                 }
@@ -55,7 +55,7 @@ class Search2 implements Runnable { // for author name
                 String t1 = book[i].author.toLowerCase();
 
                 if (t1.contains(s)) {
-                    book[i].display();
+                    //book[i].display();
                     isbnList[count] = book[i].getIsbn();
                     count++;
                 }
@@ -88,7 +88,7 @@ class Search3 implements Runnable { // for genre
                 String t1 = book[i].genre.toLowerCase();
 
                 if (t1.contains(s)) {
-                    book[i].display();
+                    //book[i].display();
                     isbnList[count] = book[i].getIsbn();
                     count++;
                 }

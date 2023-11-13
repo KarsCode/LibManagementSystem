@@ -2,6 +2,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -26,10 +27,12 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 
 import javafx.fxml.Initializable;
+import java.util.Date;
 
 
 
@@ -56,10 +59,18 @@ public class ProfileSceneController implements Initializable {
     @FXML
     private Button ReturnBookBtn;
 
+    @FXML
+    private TextField returnISBNTextField;
+
+    @FXML
+    private DatePicker datePicker;
+
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (bookTableView != null) {
-            System.out.println("HELP ME OMG");
+            //System.out.println("HELP ME OMG");
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
             isbnColumn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
     
@@ -127,12 +138,61 @@ public class ProfileSceneController implements Initializable {
 
     @FXML
     public void returnBook() {
-        // Define actions when the "Return Book" button is clicked
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Book Return");
-        alert.setHeaderText(null);
-        alert.setContentText("Book Successfully Returned");
-        alert.show();
+        String isbn = returnISBNTextField.getText();
+    
+        User currentUser = AppData.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            Book bookToReturn = null;
+    
+            // Find the borrowed book in the user's list
+            for (Book borrowedBook : currentUser.getBorrowedBooks()) {
+                if (borrowedBook != null && borrowedBook.getIsbn().equals(isbn)) {
+                    bookToReturn = borrowedBook;
+                    break;
+                }
+            }
+    
+            if (bookToReturn != null) {
+                // Get the borrowed date
+                Date borrowedDate = currentUser.getBorrowedDateByISBN(isbn);
+    
+                // Get the return date from the DatePicker
+                LocalDate returnDate = datePicker.getValue(); // Use the datePicker from FXML
+    
+                // Return the book and handle fines
+                try {
+                    currentUser.returnBorrowedBook(bookToReturn, borrowedDate, returnDate);
+    
+                    // Update the TableView directly
+
+    
+                    // Show a success message
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Book Return");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Book Successfully Returned");
+                    alert.show();
+                } catch (FineException e) {
+                    // Show an alert with fine information
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Book Return");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Delayed Book Return. \n" + e.toString());
+                    alert.show();
+                }
+            } else {
+                // Show an error message if the book is not found
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Book with ISBN " + isbn + " not found in the user's borrowed books.");
+                alert.show();
+            }
+
+            
+        }
+        ObservableList<Book> borrowedBooks = FXCollections.observableArrayList(currentUser.getBorrowedBooks());
+bookTableView.setItems(borrowedBooks);
     }
 
     

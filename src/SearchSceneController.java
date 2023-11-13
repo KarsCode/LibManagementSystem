@@ -13,8 +13,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Date;
 
@@ -63,9 +65,9 @@ public class SearchSceneController {
            if (currentUser != null) {
             Date borrowedDate = new Date(); // Current date as the borrowed date
             currentUser.addBorrowedBook(bookToBorrow, borrowedDate);
+            System.out.println(borrowedDate);
             bookToBorrow.inventory--; // Reduce the book's inventory
             showAlert(AlertType.INFORMATION, "Book Borrowed", "Book with ISBN " + isbn + " has been borrowed by " + currentUser.getUsername());
-            initialize();
         } else {
             showAlert(AlertType.ERROR, "User Not Logged In", "No user logged in to borrow the book.");
         }
